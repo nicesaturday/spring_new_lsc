@@ -33,6 +33,22 @@ public class BoardRepository {
 		return sessionTemplate.insert("boardMapper.insert" , board);
 	}
 
+	public int increaseCount(SqlSessionTemplate sessionTemplate, int boardNo) {
+		return sessionTemplate.update("boardMapper.increaseCount" , boardNo);
+	}
+
+	public Board findById(SqlSessionTemplate sessionTemplate, int boardNo) {
+		return sessionTemplate.selectOne("boardMapper.findById" , boardNo);
+	}
+
+	public int delete(SqlSessionTemplate sessionTemplate, int boardNo) {
+		return sessionTemplate.update("boardMapper.delete" , boardNo);
+	}
+
+	public int update(SqlSessionTemplate sessionTemplate, Board board) {
+		return sessionTemplate.update("boardMapper.update" , board);
+	}
+
 	
 	
 	

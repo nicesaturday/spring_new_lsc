@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.spring.board.model.service.BoardService;
 import com.kh.spring.board.model.vo.Board;
@@ -152,41 +153,15 @@ public class BoardController {
 						 Model model,
 						 HttpSession session) {
 		
-		
 		log.info("게시글 정보 : {}" , board);
 		
-		
-		
-		if(!upfile.getOriginalFilename().equals("")) {
+		if(!"".equals(upfile.getOriginalFilename())) {
 			//저장될 파일명 바꾸기
 			
-			String originName = upfile.getOriginalFilename();
-			
-			int num = (int) (Math.random() * 900) + 100;
-			
-			String currentTime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-			
-			String savePath = session.getServletContext().getRealPath("/resources/uploadFiles/");
 			
 			
-			String[] ext = (originName.split("\\."));
-			
-			
-			String changeName = "KH_" + currentTime + "_" + num + "." + ext[1];
-			log.info("파일명1 : {}" , ext[1]);
-			log.info("파일명1 : {}" , changeName);
-			try {
-				upfile.transferTo(new File(savePath + changeName));
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			
-			board.setOriginName(originName);
-			board.setChangeName(savePath + changeName);
-			log.info("파일명2 : {}" , savePath + changeName);
+			board.setOriginName(upfile.getOriginalFilename());
+			board.setChangeName(saveFile(upfile, session));
 			if(boardService.insert(board) > 0) {
 				
 				session.setAttribute("alertMsg", "성공");
@@ -196,28 +171,146 @@ public class BoardController {
 				model.addAttribute("alertMsg" , "실패");
 				return "board/list";
 			}
+
+		} else {
+			if(boardService.insert(board) > 0) {
+				session.setAttribute("alertMsg", "성공");
+				
+				return "redirect:boardlist";
+			} else {
+				model.addAttribute("alertMsg" , "실패");
+				return "board/list";
+			}
+		}
+	
+	
+	}
+	
+	
+	@GetMapping("board-detail")
+	public ModelAndView findById(int boardNo , Model model ,  ModelAndView mv) {
+		
+		log.info("보드엔오 : {}", boardNo);
+		
+		log.info("보드 : {}" , boardService.findById(boardNo));
+		if(boardService.increaseCount(boardNo) > 0) {
+			/*
+			 * model.addAttribute("board",boardService.findById(boardNo)); return
+			 * "board/boardDetail";
+			 */
 			
-		    
+			  mv.addObject("board" , boardService.findById(boardNo))
+			  .setViewName("board/boardDetail");
+			 
+		} else {
+			mv.addObject("errorMsg" , "게시글 조회에 실패했습니다.").setViewName("common/errorPage");
 		}
 		
 		
 		
-		
-		
-		return null;
+		return mv;
+	}
 	
 	
+	
+	
+	@PostMapping("boardDelete")
+	public String deleteById(int boardNo,
+							 String filePath,
+							 HttpSession session,
+							 Model model) {
+		
+		
+		
+		if(boardService.delete(boardNo) > 0) {
+			
+			if(!"".equals(filePath)) {
+				new File(session.getServletContext().getRealPath(filePath)).delete();
+			}
+			
+			session.setAttribute("alertMsg", "게시글 삭제 성공");
+			return "redirect:boardlist";
+		} else {
+			model.addAttribute("errorMsg" , "게시글 삭제 실패!");
+			return "common/errorPage";
+		}
+		
+	}
+	
+	
+	@PostMapping("boardUpdate")
+	public String update(Model model , int boardNo) {
+		
+		
+		model.addAttribute("board" , boardService.findById(boardNo));
+		return "board/boardUpdate";
 	}
 	
 	
 	
 	
 	
+	@PostMapping("update")
+	public String updateForm(ModelAndView mv , 
+								   Board board,
+								   HttpSession session,
+								   MultipartFile reupFile) {
+		
+		
+		if(!"".equals(reupFile.getOriginalFilename())) {
+			
+			board.setOriginName(reupFile.getOriginalFilename());
+			board.setChangeName(saveFile(reupFile, session));
+			
+		} else {
+			board.setOriginName(board.getOriginName());
+			board.setChangeName(board.getChangeName());
+		}
+		
+		
+		
+		
+		
+		if(boardService.update(board) > 0) {
+			session.setAttribute("alertMsg", "완료");
+			return "redirect:board-detail?boardNo=" + board.getBoardNo();
+		} else {
+			session.setAttribute("errorMsg", "실패");
+			return "common/errorPage";
+		}
+
+	}
 	
 	
 	
-	
-	
+	public String saveFile(MultipartFile upfile , HttpSession session) {
+		String originName = upfile.getOriginalFilename();
+		
+		int num = (int) (Math.random() * 900) + 100;
+		
+		String currentTime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+		
+		String savePath = session.getServletContext().getRealPath("/resources/uploadFiles/");
+		
+		log.info("세이브 파일 !@$!@$!@$@$!@{}" ,savePath);
+	    String ext = originName.substring(originName.lastIndexOf("."));
+		
+		
+		String changeName = "KH_" + currentTime + "_" + num + "." + ext;
+		log.info("파일명1 : {}" , ext);
+		log.info("파일명1 : {}" , changeName);
+		try {
+			//받은 로컬 파일 경로를 새 경로로 바꿔서 만들기(복제)
+			//로컬에 같은 이름의 파일은 존재 할 수 없다.
+			upfile.transferTo(new File(savePath + changeName));
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return "resources/uploadFiles/" + changeName;
+	}
 	
 	
 	

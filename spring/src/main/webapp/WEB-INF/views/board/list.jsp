@@ -10,18 +10,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
-        .content {
-            background-color:rgb(247, 245, 245);
-            width:80%;
-            margin:auto;
-        }
-        .innerOuter {
-            border:1px solid lightgray;
-            width:80%;
-            margin:auto;
-            padding:5% 10%;
-            background-color:white;
-        }
 
         #boardList {text-align:center;}
         #boardList>tbody>tr:hover {cursor:pointer;}
@@ -80,7 +68,7 @@
                     </c:when>
                     <c:otherwise>
                      <c:forEach items="${ list }" var="board">
-                    	<tr>
+                    	<tr class="board-detail">
                     	  <td>${board.boardNo }</td>
                     	  <td>${board.boardTitle }</td>
                     	  <td>${board.boardWriter }</td>
@@ -102,6 +90,31 @@
                 </tbody>
             </table>
             <br>
+            <script>
+              $(() => {
+            	  
+              	$('.board-detail').click(e => {
+              		
+              		location.href="board-detail?boardNo="+e.currentTarget.firstElementChild.innerText;
+              		
+              		console.log(e.currentTarget.firstElementChild.innerText);
+              		console.log($('e.currentTarget').children(':first'));
+              		console.log(window.location);
+              	})
+              
+              })
+              
+            </script>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 
             <div id="pagingArea">
                 <ul class="pagination">
