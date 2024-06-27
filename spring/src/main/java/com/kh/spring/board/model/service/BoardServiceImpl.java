@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.kh.spring.board.model.repository.BoardRepository;
 import com.kh.spring.board.model.vo.Board;
+import com.kh.spring.board.model.vo.Reply;
 
 import lombok.RequiredArgsConstructor;
 
@@ -70,6 +71,23 @@ public class BoardServiceImpl implements BoardService {
 	public int update(Board board) {
 		return boardRepository.update(sessionTemplate , board);
 	}
+
+	@Override
+	public List<Board> selectImages() {
+		return boardRepository.selectImages(sessionTemplate);
+	}
+
+	@Override
+	public List<Reply> selectReply(int boardNo) {
+		return boardRepository.selectReply(sessionTemplate , boardNo);
+	}
+
+	@Override
+	public int insertReply(Reply reply) {
+		return boardRepository.insertReply(sessionTemplate , reply);
+	}
+	
+	
 
 	
 	

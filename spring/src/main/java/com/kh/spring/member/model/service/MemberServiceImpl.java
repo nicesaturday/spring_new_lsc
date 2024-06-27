@@ -33,6 +33,11 @@ public class MemberServiceImpl implements MemberService {
 	public int delete(String userId) {
 		return memberRepository.delete(sqlSessionTemplate , userId);
 	}
+
+	@Override
+	public int idCheck(String checkId) {
+		return memberRepository.idCheck(sqlSessionTemplate , checkId);
+	}
 	
 	
 	

@@ -8,6 +8,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.spring.board.model.vo.Board;
+import com.kh.spring.board.model.vo.Reply;
 
 @Repository
 public class BoardRepository {
@@ -47,6 +48,18 @@ public class BoardRepository {
 
 	public int update(SqlSessionTemplate sessionTemplate, Board board) {
 		return sessionTemplate.update("boardMapper.update" , board);
+	}
+
+	public List<Board> selectImages(SqlSessionTemplate sessionTemplate) {
+		return sessionTemplate.selectList("boardMapper.selectImages");
+	}
+
+	public List<Reply> selectReply(SqlSessionTemplate sessionTemplate, int boardNo) {
+		return sessionTemplate.selectList("boardMapper.selectReply" , boardNo);
+	}
+
+	public int insertReply(SqlSessionTemplate sessionTemplate, Reply reply) {
+		return sessionTemplate.insert("boardMapper.insertReply" , reply);
 	}
 
 	

@@ -7,4 +7,5 @@ public interface MemberService {
 	int insert(Member member);
 	int update(Member member);
 	int delete(String userId);
+	int idCheck(String checkId);
 }

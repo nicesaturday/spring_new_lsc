@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
     
@@ -21,6 +22,8 @@
                 <div class="form-group">
                     <label for="userId">* ID : </label>
                     <input type="text" class="form-control" id="userId" placeholder="Please Enter ID" name="userId" required> <br>
+					<div id="checkResult"></div><br><br><br>
+
 
                     <label for="userPwd">* Password : </label>
                     <input type="password" class="form-control" id="userPwd" placeholder="Please Enter Password" name="userPwd" required> <br>
@@ -51,10 +54,49 @@
                 </div> 
                 <br>
                 <div class="btns" align="center">
-                    <button type="submit" class="btn btn-primary">회원가입</button>
+                    <button type="submit" id="join-btn" class="btn btn-primary disabled">회원가입</button>
                     <button type="reset" class="btn btn-danger">초기화</button>
                 </div>
             </form>
+            <script>
+              $(() => {
+            	  
+            	  const $idInput = $('.form-group #userId');
+            	  const $cheackResult = $('#checkResult');
+            	  const $joinSubmit = $('#join-btn');
+            	  
+            	  $idInput.keyup((e) => {
+            		  
+            		  if(e.target.value.length >= 5) {
+            			  
+            			  
+            			  
+            			  $.ajax({
+            				 url: "/spring/member/idCheck",
+            				 type: "get",
+            				 data: {
+            					 checkId: e.target.value
+            				 },
+            				 success: (res) => {
+            					 console.log(res);
+            					 if(res.substr(4) == 'N') {
+            						 alert("아이디 사용불가");
+            					 }
+            					 
+            					 
+            					 
+            				 },
+            				 error: () => {
+            					 console.log("아이디 중복 체크 실패!");
+            				 }
+            			  });
+            		  }
+            		  
+            		  
+            	  })
+            	  
+              })
+            </script>
         </div>
         <br><br>
 

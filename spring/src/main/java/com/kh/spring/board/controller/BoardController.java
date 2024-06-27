@@ -16,12 +16,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
 import com.kh.spring.board.model.service.BoardService;
 import com.kh.spring.board.model.vo.Board;
+import com.kh.spring.board.model.vo.Reply;
 import com.kh.spring.common.model.template.PageTemplate;
 import com.kh.spring.common.model.vo.PageInfo;
 
@@ -311,6 +315,41 @@ public class BoardController {
 		
 		return "resources/uploadFiles/" + changeName;
 	}
+	
+	
+	
+	
+	@GetMapping("image-board")
+	public String images(Model model) {
+		
+		
+		List<Board> images = boardService.selectImages();
+		
+		model.addAttribute("board" , boardService.selectImages());
+		
+		
+		
+		return "board/imageList";
+	}
+	
+	
+	
+	
+	@ResponseBody
+	@GetMapping(value="reply" , produces = "application/json;charset=UTF-8")
+	public String selectReply(int boardNo) {
+		return new Gson().toJson(boardService.selectReply(boardNo));
+	}
+	
+	
+	@ResponseBody
+	@PostMapping("reply")
+	public String saveReply(Reply reply) {
+		log.info("리플라이? : {}" , reply.toString());
+		return boardService.insertReply(reply) > 0 ? "success" : "fail";
+	}
+	
+	
 	
 	
 	

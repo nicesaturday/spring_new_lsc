@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.session.RowBounds;
 
 import com.kh.spring.board.model.vo.Board;
+import com.kh.spring.board.model.vo.Reply;
 
 public interface BoardService {
 	int boardCount();
@@ -25,6 +26,12 @@ public interface BoardService {
 	int delete(int boardNo);
 	
 	int update(Board board);
+	
+	List<Board> selectImages();
+	
+	List<Reply> selectReply(int boardNo);
+	
+	int insertReply(Reply reply);
 	
 	
 

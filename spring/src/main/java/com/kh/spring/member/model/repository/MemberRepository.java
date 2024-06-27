@@ -22,6 +22,10 @@ public class MemberRepository {
 	public int delete(SqlSessionTemplate sqlSession, String userId) {
 		return sqlSession.update("memberMapper.delete" , userId);
 	}
+
+	public int idCheck(SqlSessionTemplate sqlSession, String checkId) {
+		return sqlSession.selectOne("memberMapper.idCheck" , checkId);
+	}
 	
 	
 }

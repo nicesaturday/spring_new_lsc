@@ -96,39 +96,107 @@
             <!-- 댓글 기능은 나중에 ajax 배우고 나서 구현할 예정! 우선은 화면구현만 해놓음 -->
             <table id="replyArea" class="table" align="center">
                 <thead>
-                    <tr>
+                
+                	<c:choose>
+                 	<c:when test="${ empty sessionScope.getMember.userId }">
+                 	  <tr>
                         <th colspan="2">
-                            <textarea class="form-control" name="" id="content" cols="55" rows="2" style="resize:none; width:100%;"></textarea>
+                            <textarea class="form-control" name="" id="content" cols="55" rows="2" style="resize:none; width:100%;">
+                              로그인 이후 사용 가능합니다.
+                            </textarea>
                         </th>
                         <th style="vertical-align:middle"><button class="btn btn-secondary">등록하기</button></th> 
-                    </tr>
+                      </tr>
+                 	</c:when>
+                
+                    
+                    <c:otherwise>
+                    	<tr>
+                        <th colspan="2">
+                            <textarea class="form-control" name="replyContent" id="content" cols="55" rows="2" style="resize:none; width:100%;">
+                            
+                            </textarea>
+                        </th>
+                        <th style="vertical-align:middle"><button onclick="saveReply()" class="btn btn-secondary">등록하기</button></th> 
+                      </tr>
+                    
+                    </c:otherwise>
+                    
+                    </c:choose>
+                    
+                    
+                    
                     <tr>
-                        <td colspan="3">댓글(<span id="rcount">3</span>)</td>
+                        <td colspan="3">댓글(<span id="rcount"></span>)</td>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th>user02</th>
-                        <td>ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ꿀잼</td>
-                        <td>2023-03-12</td>
-                    </tr>
-                    <tr>
-                        <th>user01</th>
-                        <td>재밌어요</td>
-                        <td>2023-03-11</td>
-                    </tr>
-                    <tr>
-                        <th>admin</th>
-                        <td>댓글입니다!!</td>
-                        <td>2023-03-10</td>
-                    </tr>
+                    
+                    
                 </tbody>
             </table>
         </div>
         <br><br>
 
     </div>
+    <script>
+    function saveReply() {
+    	if($('#content').val().trim() != '') {
+    		$.ajax({
+    			url:'reply',
+    			type: 'post',
+    			data: {
+    				refBoardNo : ${board.boardNo},
+    				replyContent : $('#content').val(),
+    				replyWriter : "${ sessionScope.getMember.userId}"
+    			},
+    			success : res => {
+    				if(res == "success") {
+    					selectReply();
+    					$('#content').val('');
+    				}
+    			}
+    			
+    		})
+    	}else {
+    		alert("글을 작성해주세요.");
+    	}
+    	
+    }
+
     
+    $(() => {
+      selectReply();
+    })
+    
+    function selectReply() {
+    	$.ajax({
+    		url: "reply",
+    		type: "get",
+    		data: {
+    			boardNo: ${board.boardNo}
+    		},
+    		success: result => {
+    			let resultStr = '';
+    			
+    			for(let i in result) {
+    				resultStr += '<tr>'
+    						+	'<td>' + result[i].replyWriter + '</td>'
+    						+	'<td>' + result[i].replyContent + '</td>'
+    						+	'<td>' + result[i].createDate + '</td>'
+    						+ '</tr>';
+    			}
+    			$('#replyArea tbody').html(resultStr);
+    			$('#rcount').text(result.length);
+    			console.log(result);
+    			console.log(resultStr);
+    		}
+    	})
+    }
+    
+    
+    
+    </script>
     <jsp:include page="../common/footer.jsp" />
     
 </body>
