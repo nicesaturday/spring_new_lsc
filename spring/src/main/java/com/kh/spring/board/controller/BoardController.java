@@ -350,6 +350,14 @@ public class BoardController {
 	}
 	
 	
+	@ResponseBody
+	@GetMapping(value="board-reply" , produces = "application/json;charset=UTF-8")
+	public String boardAndReply(int boardNo) {
+		return new Gson().toJson(boardService.boardAndReply(boardNo));
+	}
+	
+	
+	
 	
 	
 	

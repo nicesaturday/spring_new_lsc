@@ -33,6 +33,11 @@ public interface BoardService {
 	
 	int insertReply(Reply reply);
 	
+	Board boardAndReply(int boardNo);
+	
+	
+	List<Board> findTopBoard();
+	
 	
 
 }
