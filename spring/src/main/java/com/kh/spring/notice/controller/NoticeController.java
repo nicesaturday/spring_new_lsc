@@ -3,8 +3,12 @@ package com.kh.spring.notice.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,6 +47,69 @@ public class NoticeController {
 	}
 	
 	
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<Message> findById(@PathVariable int id) {
+		Notice notice = noticeService.findById(id);
+		
+		if(notice == null) {
+			return ResponseEntity.status(HttpStatus.OK)
+								 .body(Message.builder()
+										 	  .message("조회결과가 존재하지 않습니다.")
+										 	  .build());
+		}
+		
+		Message responseMsg = Message.builder()
+									 .message("조회 요청에 성공했습니다.")
+									 .data(notice)
+									 .build();
+		
+		return ResponseEntity.status(HttpStatus.OK).body(responseMsg);
+	}
+	
+	
+	@PostMapping
+	public ResponseEntity<Message> save(Notice notice) {
+		log.info("이게 노티스? : {}" , notice);
+		
+		if("".equals(notice.getNoticeWriter()) || "".equals(notice.getNoticeTitle()) || "".equals(notice.getNoticeContent())) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Message.builder()
+																			 .message("서비스 요청 실패")
+																			 .data("필수 파라미터가 누락되었습니다.")
+																			 .build());
+		}
+	
+		int result = noticeService.save(notice);
+		
+		if(result == 0) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+									.body(Message.builder().message("추가 실패").build());
+			
+		}
+		
+		Message responseMsg = Message.builder().data("공지사항 추가에 성공했습니다.")
+												.message("서비스 요청 성공")
+												.build();
+		return ResponseEntity.status(HttpStatus.OK).body(responseMsg);
+	}
+	
+	
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Message> deleteById(@PathVariable int id) {
+		int result = noticeService.delete(id);
+		
+		if(result == 0) {
+			return ResponseEntity.status(HttpStatus.OK).body(Message.builder()
+																	.message("게시글이 존재하지 않습니다.")
+																	.build());
+		}
+		
+		Message responseMsg = Message.builder().data("삭제 성공").message("서비스 요청 성공").build();
+		
+		return ResponseEntity.status(HttpStatus.OK).body(responseMsg);
+				
+	}
 	
 	
 }

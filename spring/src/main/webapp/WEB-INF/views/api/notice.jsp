@@ -79,7 +79,7 @@
 				
 				  <div class="form-group">
 					<label>작성자</label>
-					<input type="text" class="form-control" id='noticeWriter' value="" readonly>
+					<input type="text" class="form-control" id='noticeWriter' value="${ sessionScope.getMember.userId }" readonly>
 				  </div>
 				  
 				  <div class="form-group">
@@ -114,7 +114,7 @@
 					<input type="hidden" value="" id="updateNo"/>
 				  <div class="form-group">
 					<label>작성자</label>
-					<input type="text" class="form-control" id='updateWriter' value="" readonly>
+					<input type="text" class="form-control" id='updateWriter' value="${ sessionScope.getMember.userId }" readonly>
 				  </div>
 				  
 				  <div class="form-group">
@@ -137,6 +137,144 @@
 		  </div>
 		</div>
 	</div>
+	
+	<script>
+		window.onload = () => {
+			findAll();
+			
+		}
+		
+		
+		
+		function insert() {
+			const requestData = {
+					"noticeWriter": $('#noticeWriter').val(),
+					"noticeTitle": $('#noticeTitle').val(),
+					"noticeContent" : $('#noticeContent').val()
+			};
+			
+			$.ajax({
+				url : 'notice' ,
+				type : 'post' ,
+				data : requestData,
+				success: res => {
+					console.log(res);
+					
+					if(res.message === "서비스 요청 성공") {
+						$('#outerDiv').remove();
+						findAll();
+						$('#noticeTitle').val('');
+						$('#noticeContent').val('');
+					}
+					
+				}
+			})
+		}
+		
+		
+		
+		
+		function deleteById(noticeNo) {
+			
+			$.ajax({
+				url: 'notice/' + noticeNo,
+				type: 'delete',
+				success: res => {
+					console.log(res);
+					if(res.data === '삭제 성공') {
+						$('#detail').slideUp(300);
+						$('#outerDiv').remove();
+						findAll();
+					};
+				}
+				
+				
+			})
+		}
+		
+		
+		
+		
+		
+		
+		$('#content').on('click' , '.noticeEl' , e => {
+			console.log(e.currentTarget.childNodes[0].innerText);
+			const noticeNo = e.currentTarget.childNodes[0].innerText;
+			$.ajax({
+				url: 'notice/' + noticeNo,
+				type: 'get',
+				success: response => {
+					console.log(response.data);
+					
+					const notice = response.data;
+					
+					const contentValue = '<div id="notice-detail">'
+					
+					
+										+ '<div>' + notice.noticeTitle + '</div>'
+										+ '<div>' + notice.noticeContent + '</div>'
+										+ '<div>'
+										+ '<a class="btn btn-sm btn-warning" data-toggle="modal" href="#updateModal">'
+										+ '수정하기'
+										+ '</a>'
+										+ '<a class="btn btn-sm btn-secondary" onclick="deleteById(' + notice.noticeNo +')">삭제하기</a>'
+										+ '</div>'
+										+ '</div>';
+					$('#detail').html(contentValue);
+					$('#detail').slideDown(500);
+										
+										
+				}
+			})
+			
+		});
+		
+		
+		
+		
+		function findAll() {
+			$.ajax({
+				url: "notice",
+				type: 'get',
+				success: response => {
+					console.log(response.data);
+					
+					const outerDiv = document.createElement("div");
+					outerDiv.id = 'outerDiv';
+					
+					
+					response.data.map((item) => {
+						
+						const noticeEl = document.createElement('div');
+						noticeEl.className = 'noticeEl';
+						
+						
+						
+						noticeEl.appendChild(createDiv(item.noticeNo , '50px'));
+						noticeEl.appendChild(createDiv(item.noticeTitle , '400px'));
+						noticeEl.appendChild(createDiv(item.noticeWriter , '150px'));
+						noticeEl.appendChild(createDiv(item.createDate , '200px'));
+						
+						outerDiv.appendChild(noticeEl);
+						console.log(noticeEl);
+					});
+					
+					document.getElementById('content').appendChild(outerDiv);
+					
+				}
+			})
+		}
+		
+		function createDiv(data, style) {
+			const divEl = document.createElement('div');
+			const divText = document.createTextNode(data);
+			divEl.style.width = style;
+			divEl.appendChild(divText);
+			return divEl;
+		}
+		
+		
+	</script>
 
 	
 
