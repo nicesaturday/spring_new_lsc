@@ -10,18 +10,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
-        .content {
-            background-color:rgb(247, 245, 245);
-            width:80%;
-            margin:auto;
-        }
-        .innerOuter {
-            border:1px solid lightgray;
-            width:80%;
-            margin:auto;
-            padding:5% 10%;
-            background-color:white;
-        }
 
         #boardList {text-align:center;}
         #boardList>tbody>tr:hover {cursor:pointer;}
@@ -80,7 +68,7 @@
                     </c:when>
                     <c:otherwise>
                      <c:forEach items="${ list }" var="board">
-                    	<tr>
+                    	<tr class="board-detail">
                     	  <td>${board.boardNo }</td>
                     	  <td>${board.boardTitle }</td>
                     	  <td>${board.boardWriter }</td>
@@ -102,29 +90,65 @@
                 </tbody>
             </table>
             <br>
+            <script>
+              $(() => {
+            	  
+              	$('.board-detail').click(e => {
+              		
+              		location.href="board-detail?boardNo="+e.currentTarget.firstElementChild.innerText;
+              		
+              		console.log(e.currentTarget.firstElementChild.innerText);
+              		console.log($('e.currentTarget').children(':first'));
+              		console.log(window.location);
+              	})
+              
+              })
+              
+            </script>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 
             <div id="pagingArea">
                 <ul class="pagination">
-                    <li class="page-item disabled"><a class="page-link" href="#">이전</a></li>
-                    
+                
+                  <c:choose>
+                   <c:when test="${ pageInfo.currentPage eq 1  }">
+                    <li class="page-item">
+                      <a class="page-link" href="#">이전</a>
+                    </li>
+                   </c:when>
+                   <c:otherwise>
+                     <li class="page-item">
+                      <a class="page-link" href="boardlist?page=${ pageInfo.currentPage - 1 }">이전</a>
+                    </li>
+                   </c:otherwise>
+                  </c:choose>
                     
                     
                     
                     <!--  p값을 param으로던져주면 page파라미터를 받고 컨트롤러에서 startPage,endPage가 바뀐다. -->
                     
                      <c:forEach begin="${pageInfo.startPage }" end="${ pageInfo.endPage }" var="p">
-                     <c:choose>
-                     <c:when test="${ not empty keyword && not empty condition}">
-                    	<li class="page-item">
-                    	  <a class="page-link" href="boardlist?page=${p }">${p }</a>
-                    	</li>
-                    	</c:when>
-                    	<c:otherwise>
-                    	 <li class="page-item">
-                    	  <a class="page-link" href="boardlist?page=${p }&condition=${ condition}&keyword=${ keyword}">${p }</a>
-                    	 </li>
-                    	</c:otherwise>
-                    </c:choose>
+                       <c:choose>
+                         <c:when test="${ empty keyword && empty condition}">
+                    	   <li class="page-item">
+                    	     <a class="page-link" href="boardlist?page=${p }">${p }</a>
+                    	   </li>
+                    	 </c:when>
+                    	 <c:otherwise>
+                    	   <li class="page-item">
+                    	     <a class="page-link" href="search?page=${p }&condition=${ condition}&keyword=${ keyword}">${p }</a>
+                    	   </li>
+                    	 </c:otherwise>
+                        </c:choose>
 					 </c:forEach>	
 					
 

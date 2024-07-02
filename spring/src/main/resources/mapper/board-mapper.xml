@@ -290,37 +290,38 @@ BY
 
 </select>
 
-<select id="findTopBoard" resultType="board">
-SELECT 
-       
-        
-        BOARD_NO boardNo,
-       		   BOARD_TITLE boardTitle,
-               BOARD_WRITER boardWriter,
-               COUNT,
-        	   CREATE_DATE createDate,
-         	   ORIGIN_NAME originName,
-               ROWNUM RNUM
-FROM
-(SELECT 
-        BOARD_NO,
-        BOARD_TITLE,
-        BOARD_WRITER,
-        COUNT,
-        CREATE_DATE,
-        ORIGIN_NAME
-FROM
-BOARD
-WHERE 
-      STATUS = 'Y'
-ORDER BY COUNT DESC
-)
-WHERE ROWNUM BETWEEN 1 AND 5 
+
+ <select id="findTopBoard" resultType="board">
+        SELECT 
+               
+                
+                BOARD_NO boardNo,
+               		   BOARD_TITLE boardTitle,
+                       BOARD_WRITER boardWriter,
+                       COUNT,
+                	   CREATE_DATE createDate,
+                 	   ORIGIN_NAME originName,
+                       ROWNUM RNUM
+        FROM
+        (SELECT 
+                BOARD_NO,
+                BOARD_TITLE,
+                BOARD_WRITER,
+                COUNT,
+                CREATE_DATE,
+                ORIGIN_NAME
+        FROM
+        BOARD
+        WHERE 
+              STATUS = 'Y'
+        ORDER BY COUNT DESC
+        )
+        WHERE ROWNUM BETWEEN 1 AND 5 
 
 
-</select>
+ </select>
 
-
+ 
 
 
 

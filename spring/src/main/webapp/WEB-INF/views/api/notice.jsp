@@ -119,7 +119,7 @@
 				  
 				  <div class="form-group">
 					<label>제목</label>
-					<input type="text" class="form-control" id='updateTitle' value="">
+					<input type="text" class="form-control" id='updateTitle' value="${ notice.noticeTitle }">
 				  </div>
 		
 				  <div class="form-group">
@@ -143,6 +143,34 @@
 			findAll();
 			
 		}
+		
+		
+		
+		function update() {
+			const updateData = {
+					"noticeNo" : $('updateNo').val(),
+					"noticeTitle" : $('updateTitle').val(),
+					"noticeWriter" : $('updateWriter').val(),
+					"noticeContent" : $('updateContent').val()
+			}
+			
+			$.ajax({
+				url: 'notice',
+				type: 'put',
+				data: JSON.stringify(updateData),
+				contentType: 'application/json',
+				success: result => {
+					if(result.data === 1) {
+						$('#outerDiv').remove();
+	                    $('#detail').slideUp(2000);
+	                    findAll();
+					}
+				}
+			})
+		}
+		
+		
+		
 		
 		
 		
@@ -220,6 +248,10 @@
 										+ '<a class="btn btn-sm btn-secondary" onclick="deleteById(' + notice.noticeNo +')">삭제하기</a>'
 										+ '</div>'
 										+ '</div>';
+					$('#updateNo').val(notice.noticeNo);
+					$('#updateTitle').val(notice.noticeTitle);
+					$('#updateWriter').val(notice.noticeWriter);
+					$('#updateContent').val(notice.noticeContent);
 					$('#detail').html(contentValue);
 					$('#detail').slideDown(500);
 										
