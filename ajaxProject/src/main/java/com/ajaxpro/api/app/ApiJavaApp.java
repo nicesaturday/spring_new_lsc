@@ -6,6 +6,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ajaxpro.api.model.vo.AirVo;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 
 public class ApiJavaApp {
@@ -42,13 +49,13 @@ public class ApiJavaApp {
 		BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 		
 		
-		
+		String response = "";
 		while(true) {
 			
 			String res = br.readLine();
 			
 			if(res != null) {
-				System.out.println(res);
+				response += res;
 			} else {
 				break;
 			}
@@ -56,6 +63,40 @@ public class ApiJavaApp {
 			
 			
 		}
+		
+		
+		JsonObject jsonObj = JsonParser.parseString(response).getAsJsonObject().getAsJsonObject("response").getAsJsonObject("body");
+		int totalCount = jsonObj.get("totalCount").getAsInt();
+		
+		JsonArray items = jsonObj.getAsJsonArray("items");
+		
+		
+		
+		System.out.println(response);
+		System.out.println(jsonObj);
+		System.out.println(totalCount);
+		System.out.println(items);
+		
+		
+		
+		
+		
+		List<AirVo> alist =  new ArrayList<AirVo>();
+		
+		
+		for(int i = 0; i < items.size(); i++) {
+			JsonObject item = items.get(i).getAsJsonObject();
+			AirVo airvo = new AirVo();
+			airvo.setPm10Value(item.get("pm10Value").getAsString());
+			airvo.setNo2Grade(item.get("no2Grade").getAsString());
+			airvo.setO3Grade(item.get("03Grade").getAsString());
+			airvo.setNo2Value(item.get("no2Value").getAsString());
+		}
+		
+		br.close();
+		urlConnection.disconnect();
+		
+		
 		
 		
 		
