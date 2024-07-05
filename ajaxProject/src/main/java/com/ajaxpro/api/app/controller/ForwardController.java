@@ -14,7 +14,7 @@ public class ForwardController {
 	
 	@GetMapping("busan")
 	public String busan() {
-		return "busan";
+		return "busan/busan";
 	}
 	
 	@GetMapping("shop")
@@ -29,10 +29,13 @@ public class ForwardController {
 	
 	@GetMapping("food")
 	public String food() {
-		return "busanMatjip";
+		return "busan/busanMatjip";
 	}
 	
-	
+	@GetMapping("login")
+	public String login() {
+		return "kakao/kakao-login";
+	}
 	
 	
 }

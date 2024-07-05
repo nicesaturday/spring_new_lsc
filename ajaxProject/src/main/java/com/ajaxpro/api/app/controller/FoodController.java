@@ -18,7 +18,7 @@ public class FoodController {
 	@GetMapping(value="/{pageNo}" , produces = "application/json; charset=UTF-8")
 	public String foods(@PathVariable int pageNo) throws IOException {
 		
-		
+		System.out.println("오긴옴");
 		StringBuilder sb = new StringBuilder();
 		sb.append("https://apis.data.go.kr/6260000/FoodService/getFoodKr");
 		sb.append("?serviceKey=" + AirController.key);

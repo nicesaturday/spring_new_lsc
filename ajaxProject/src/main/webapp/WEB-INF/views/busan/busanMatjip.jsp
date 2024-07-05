@@ -52,7 +52,7 @@
 							 +  '<td>' + item.USAGE_DAY_WEEK_AND_TIME + '</td>'
 							 +  '<td><img src="' + item.MAIN_IMG_THUMB + '"</td>'
 							 +  '<td>'
-							 +  '<form method="post" action="foods/detail">'
+							 +  '<form method="get" action="foods/detail">'
 							 +  '<input type="hidden" name="title" value="' + item.MAIN_TITLE  + '"/>'
 							 +  '<input type="hidden" name="lay" value="' + item.LAY  + '"/>'
 							 +  '<input type="hidden" name="lng" value="' + item.LNG  + '"/>'
