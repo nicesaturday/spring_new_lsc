@@ -3,8 +3,17 @@ package com.kh.spring.member.controller;
 
 
 
+import java.text.DecimalFormat;
+import java.text.Format;
+import java.util.Random;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.spring.member.model.service.MemberService;
+import com.kh.spring.member.model.vo.CertVO;
 import com.kh.spring.member.model.vo.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +43,7 @@ public class MemberController {
 	
 	private final MemberService memberService;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final JavaMailSenderImpl sender;
 	
 	@PostMapping("/login.do")
 	public ModelAndView login(Member member,
@@ -158,9 +169,67 @@ public class MemberController {
 	
 	
 	
+	@GetMapping("/mail-input")
+	public String forwardInputForm() {
+		
+		
+		
+		
+		return "mail/input";
+	}
 	
 	
 	
+	
+	
+	
+	@PostMapping("auth-mail")
+	public String authMailService(String email , HttpServletRequest request) throws MessagingException {
+		
+		
+		String remoteAddr = request.getRemoteAddr();
+		
+		// 렌덤 코드 만들기
+		
+		
+		Random r = new Random();
+		int i = r.nextInt(100000);
+		Format format = new DecimalFormat("000000");
+		String code = format.format(i);
+		
+		CertVO cert = CertVO.builder()
+							.who(remoteAddr)
+							.code(code)
+							.build();
+		
+		int result = memberService.sendMail(cert);
+		
+		MimeMessage message = sender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message , false , "UTF-8");
+		
+		helper.setTo(email);
+		helper.setSubject("인증번호 전송입니다.");
+		helper.setText("인증번호 : " + code);
+		
+		sender.send(message);
+							
+		
+		return "mail/check";
+	}
+	
+	
+	@PostMapping("checked")
+	public String checkCode(String code , HttpServletRequest request) {
+		CertVO cert = CertVO.builder()
+							.who(request.getRemoteAddr())
+							.code(code)
+							.build();
+		
+		boolean result = memberService.validate(cert);
+		
+		
+		return "result : " + result;
+	}
 	
 	
 	

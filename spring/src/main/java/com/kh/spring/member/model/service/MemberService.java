@@ -1,5 +1,6 @@
 package com.kh.spring.member.model.service;
 
+import com.kh.spring.member.model.vo.CertVO;
 import com.kh.spring.member.model.vo.Member;
 
 public interface MemberService {
@@ -8,4 +9,6 @@ public interface MemberService {
 	int update(Member member);
 	int delete(String userId);
 	int idCheck(String checkId);
+	int sendMail(CertVO cert);
+	boolean validate(CertVO cert);
 }
