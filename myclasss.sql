@@ -7,6 +7,18 @@ DROP SEQUENCE SEQ_NNO;      -- 공지사항번호 발생시킬 시퀀스
 DROP SEQUENCE SEQ_BNO;      -- 게시판번호 발생시킬 시퀀스
 DROP SEQUENCE SEQ_RNO;      -- 댓글번호 발생시킬 시퀀스
 
+CREATE TABLE TB_CERT (
+    WHO VARCHAR2(50),
+    CODE VARCHAR2(50),
+    ENROLL_DATE DATE DEFAULT SYSDATE,
+    PRIMARY KEY(WHO , CODE)
+)
+
+SELECT WHO , CODE , EBROLL_DATE FROM TB_CERT
+WHERE WHO = 'a' AND CODE = '1'
+AND ENROLL_DATE BETWEEN SYSDATE - 3/24/60 AND SYSDATE;
+
+
 
 --------------------------------------------------
 --------------     MEMBER 관련	------------------	
