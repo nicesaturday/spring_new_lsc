@@ -37,7 +37,7 @@ public class MemberRepository {
 		boolean result = sqlSessionTemplate.selectOne("memberMapper.validate" , cert);
 		
 		if(result) {
-			MemberRepository.delete(sqlSessionTemplate , cert);
+			
 		}
 		
 		
